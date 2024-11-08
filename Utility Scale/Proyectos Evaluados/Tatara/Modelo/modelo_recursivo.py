@@ -1,7 +1,6 @@
 from matplotlib import pyplot as plt
 import pulp
 import pandas as pd
-import pandas as pd
 import datetime
 from funciones_visualizacion_resultados import menu_graficos, menu_graficos_v2, grafico_curva_despacho_dia_navegable
 from funciones_extra import calcular_ventanas_carga_descarga_año, calcular_ventanas_carga_descarga_diario, calcular_ventanas_carga_descarga_diario_v2, calcular_ventanas_carga_descarga_diario_v3
@@ -132,7 +131,7 @@ def optimizar_año(año, SoC_inicial, parametros_planta, CoD, generacion_list, d
     discharge_status = pulp.LpVariable.dicts("DischargeStatus", t_indices, cat='Binary')
 
     # Variables adicionales para inyección a la red y curtailment
-    PV_grid_t = pulp.LpVariable.dicts('PV_grid_t', t_indices, lowBound=-0.020, upBound=nominal_power, cat=pulp.LpContinuous)
+    PV_grid_t = pulp.LpVariable.dicts('PV_grid_t', t_indices, lowBound=-0.01833, upBound=nominal_power, cat=pulp.LpContinuous)
     PV_curtail_t = pulp.LpVariable.dicts('PV_curtail_t', t_indices, lowBound=0, cat=pulp.LpContinuous)
 
 
@@ -149,7 +148,7 @@ def optimizar_año(año, SoC_inicial, parametros_planta, CoD, generacion_list, d
         penalty_curtail = PV_curtail_t[t] * costos_marginales[t] if costos_marginales[t] > 0 else -0.1 * PV_curtail_t[t]
 
         # Total revenue at time t
-        revenue_terms.append(revenue_pv + revenue_bess - cost_charge - penalty_curtail)
+        revenue_terms.append(revenue_pv + revenue_bess)
 
     # Establecer la función objetivo
     model += pulp.lpSum(revenue_terms)
@@ -318,7 +317,6 @@ def optimizar_año(año, SoC_inicial, parametros_planta, CoD, generacion_list, d
             'PV_Curtailment': PV_curtail_sol,
             'Carga_BESS': C_sol,
             'Descarga_BESS': D_sol,
-
             'inyeccion_neta': [PV_grid_sol[t] + D_sol[t] for t in t_indices],
             
             'Ingresos_BESS': [D_sol[t] * costos_marginales[t] for t in t_indices],
@@ -346,7 +344,7 @@ def optimizar_año(año, SoC_inicial, parametros_planta, CoD, generacion_list, d
 
 # Parámetros de la planta
 parametros_planta = {
-    'peak_power': 36,  # MW
+    'peak_power': 33,  # MW
     'nominal_power': 30,  # MW
     'inverter_efficency_pv': 0.97,
     'degradacion_anual_pv': 0.0045,
@@ -369,11 +367,11 @@ CoD = parametros_planta['CoD']
 vida_util_proyecto = 25  # Años
 
 # Leer 'generacion.csv' una vez
-generacion_df = pd.read_csv('Modelo/generacion_tatara.csv', sep=';')
+generacion_df = pd.read_csv('Modelo/Generaciones/generacion_tatara_pv_puro_33MWp.csv', sep=';')
 generacion_list = generacion_df['G solar'].tolist()
 for i in range(len(generacion_list)):
     generacion_list[i] = generacion_list[i].replace(',', '.')
-    generacion_list[i] = max(-0.020, float(generacion_list[i]))
+    generacion_list[i] = max(-0.01833, float(generacion_list[i]))
 
 
 # Estado inicial de carga (SoC)
@@ -401,10 +399,10 @@ for año in range(CoD, CoD + vida_util_proyecto):
 
 # Guardar resultados en un archivo
 try:
-    resultados.to_excel('Resultados/resultados_optimizacion_25_años_tatara_pv+bess.xlsx', index=False)
+    resultados.to_excel('Modelo\Generaciones\calculo_generacion_pv_puro_33MWp.xlsx', index=False)
 
 except:
     print('Error al guardar los resultados en el archivo, debes cerrar el archivo')
     breakpoint()
-    resultados.to_excel('Resultados/resultados_optimizacion_25_años_tatara_pv+bess.xlsx', index=False)
+    resultados.to_excel('Modelo\Generaciones\calculo_generacion_pv_puro_33MWp.xlsx', index=False)
 
