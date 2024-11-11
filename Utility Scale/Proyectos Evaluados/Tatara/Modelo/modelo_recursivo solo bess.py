@@ -219,7 +219,7 @@ def optimizar_año(año, SoC_inicial, parametros_planta, CoD, df_cmg):
 parametros_planta = {
     'bess_charge_power': 30,  # MW
     'bess_discharge_power': 30,  # MW
-    'bess_initial_energy_capacity': 180,  # MWh
+    'bess_initial_energy_capacity': 210,  # MWh
     'degradacion_anual_bess': 0.02,
     'bess_charge_efficency': 0.92,
     'bess_discharge_efficency': 0.94,
@@ -264,8 +264,8 @@ for año in range(CoD, CoD + vida_util_proyecto):
 
 # Guardar resultados en un archivo
 try:
-    resultados.to_excel('Modelo/Generaciones/calculo_operacion_bess_puro_30MWp_6hrs.xlsx', index=False)
+    resultados.to_excel('Modelo/Generaciones/calculo_operacion_bess_puro_30MWp_7hrs.xlsx', index=False)
 except:
     print('Error al guardar los resultados en el archivo, debes cerrar el archivo')
     breakpoint()
-    resultados.to_excel('Modelo/Generaciones/calculo_operacion_bess_puro_30MWp_6hrs.xlsx', index=False)
+    resultados.to_excel('Modelo/Generaciones/calculo_operacion_bess_puro_30MWp_7hrs.xlsx', index=False)
