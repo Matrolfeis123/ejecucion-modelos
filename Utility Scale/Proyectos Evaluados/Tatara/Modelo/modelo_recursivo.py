@@ -344,7 +344,7 @@ def optimizar_año(año, SoC_inicial, parametros_planta, CoD, generacion_list, d
 
 # Parámetros de la planta
 parametros_planta = {
-    'peak_power': 33,  # MW
+    'peak_power': 30,  # MW
     'nominal_power': 30,  # MW
     'inverter_efficency_pv': 0.97,
     'degradacion_anual_pv': 0.0045,
@@ -371,7 +371,7 @@ generacion_df = pd.read_csv('Modelo/Generaciones/generacion_tatara_pv_puro_33MWp
 generacion_list = generacion_df['G solar'].tolist()
 for i in range(len(generacion_list)):
     generacion_list[i] = generacion_list[i].replace(',', '.')
-    generacion_list[i] = max(-0.01833, float(generacion_list[i]))
+    generacion_list[i] = max(-0.01666, float(generacion_list[i]))
 
 
 # Estado inicial de carga (SoC)
