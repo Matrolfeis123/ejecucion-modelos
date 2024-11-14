@@ -118,7 +118,9 @@ def optimizar_año(año, SoC_inicial, parametros_planta, CoD, df_cmg):
     # Restricciones
     # Flujo del SoC
     model += (
-        SOC_t[0] == SoC_inicial + C_t[0] * bess_charge_efficency * inverter_efficency_bess - D_t[0] *(1/ (bess_discharge_efficency * inverter_efficency_bess)),
+        SOC_t[0] == SoC_inicial + 
+        C_t[0] * bess_charge_efficency * inverter_efficency_bess - 
+        D_t[0] * (1/ (bess_discharge_efficency * inverter_efficency_bess)),
         'SOC_initial_condition'
     )
 
@@ -130,6 +132,7 @@ def optimizar_año(año, SoC_inicial, parametros_planta, CoD, df_cmg):
                 D_t[t]*(1/ (bess_discharge_efficency * inverter_efficency_bess)),
                 f"Estado_Carga_{t}"
             )
+
         # Límites del SoC
         model += (
             SOC_t[t] <= bess_actual_energy_capacity,
@@ -140,7 +143,7 @@ def optimizar_año(año, SoC_inicial, parametros_planta, CoD, df_cmg):
             f"Min_SOC_{t}"
         )
 
-        # Límites de carga y descarga
+        # Límites de carga y descarga: Quizas, este limite se puede cambiar por C_t[t] * bess_charge_efficency * inverter_efficency_bess <= bess_actual_energy_capacity
         model += (
             C_t[t] <= bess_charge_power,
             f"Max_Carga_{t}"
@@ -149,7 +152,6 @@ def optimizar_año(año, SoC_inicial, parametros_planta, CoD, df_cmg):
             D_t[t] <= bess_discharge_power,
             f"Max_Descarga_{t}"
         )
-
 
         # No simultaneidad de carga y descarga
         big_M = max(bess_charge_power, bess_discharge_power)
