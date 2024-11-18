@@ -96,6 +96,7 @@ def optimizar_año_pv_bess(año, SoC_inicial, parametros_planta, CoD, generacion
     else:
         generacion_año = generacion_list
 
+    lower_bound_gen = min(generacion_año)
 
     # Calcular el indice de año desde el CoD
     indice_año = año - CoD
@@ -134,7 +135,7 @@ def optimizar_año_pv_bess(año, SoC_inicial, parametros_planta, CoD, generacion
     discharge_status = pulp.LpVariable.dicts("DischargeStatus", t_indices, cat='Binary')
 
     # Variables adicionales para inyección a la red y curtailment
-    PV_grid_t = pulp.LpVariable.dicts('PV_grid_t', t_indices, lowBound=-0.01833, upBound=nominal_power, cat=pulp.LpContinuous)
+    PV_grid_t = pulp.LpVariable.dicts('PV_grid_t', t_indices, lowBound=lower_bound_gen, upBound=nominal_power, cat=pulp.LpContinuous)
     PV_curtail_t = pulp.LpVariable.dicts('PV_curtail_t', t_indices, lowBound=0, cat=pulp.LpContinuous)
 
 
@@ -309,14 +310,15 @@ def optimizar_año_pv_bess(año, SoC_inicial, parametros_planta, CoD, generacion
             'Codigo': df_cmg_año['Codigo'].values,
             'carga': charge_status_sol,
             'descarga': discharge_status_sol,
+            'Carga_BESS': C_sol,
+            'Descarga_BESS': D_sol,
             'SOC': SOC_sol,
-            'CMg': [costos_marginales[t] for t in t_indices],
             'Generacion_PV': [G_pv_t[t] for t in t_indices],
+            'CMg': [costos_marginales[t] for t in t_indices],
             
             'PV_Inyectada_Grid': PV_grid_sol,
             'PV_Curtailment': PV_curtail_sol,
-            'Carga_BESS': C_sol,
-            'Descarga_BESS': D_sol,
+
             'inyeccion_neta': [PV_grid_sol[t] + D_sol[t] for t in t_indices],
             
             'Ingresos_BESS': [D_sol[t] * costos_marginales[t] for t in t_indices],
@@ -351,9 +353,9 @@ def sensibilidad_pv_bess(parametros_planta_base, SoC_inicial, CoD, vida_util_pro
 
     # Loop over peak_power and capacidad_values combinations
     for peak_power in peak_power_values:
-            # Cargar los datos de generación de PV
+        # Cargar los datos de generación de PV Genesis\V_Generacion\
         # Leer 'generacion.csv' una vez
-        generacion_df = pd.read_csv(f'Tatara/Modelo/Generaciones/generacion_tatara_pv_puro_{peak_power}MWp.csv', sep=';')
+        generacion_df = pd.read_csv(f'Genesis/V_Generacion/generacion_genesis_{peak_power}MWp_Utility.csv', sep=';')
         generacion_list = generacion_df['G solar'].tolist()
         for i in range(len(generacion_list)):
             generacion_list[i] = generacion_list[i].replace(',', '.')
@@ -364,7 +366,7 @@ def sensibilidad_pv_bess(parametros_planta_base, SoC_inicial, CoD, vida_util_pro
 
             # Copy the base parameters to avoid modifying the original dict
             parametros_planta = parametros_planta_base.copy()
-            parametros_planta['peak_power'] = 30
+            parametros_planta['peak_power'] = peak_power
             parametros_planta['nominal_power'] = 30  # Assuming nominal power is 30 MW
             parametros_planta['bess_initial_energy_capacity'] = capacidad
             parametros_planta['bess_charge_hours'] = capacidad / parametros_planta['bess_charge_power']
@@ -427,7 +429,7 @@ def sensibilidad_pv_bess(parametros_planta_base, SoC_inicial, CoD, vida_util_pro
             })
 
             # Save the results to an Excel file
-            filename = f"{path_carpeta_output}/output_pv_{peak_power}MW_bess_{capacidad}MWh_{parametros_planta["bess_initial_energy_capacity"]/parametros_planta["bess_charge_power"]}hrs.xlsx"
+            filename = f"{path_carpeta_output}/output_pv_{peak_power}MW_bess_{capacidad}MWh_{parametros_planta["bess_charge_hours"]}hrs.xlsx"
             try:
                 resultados.to_excel(filename, index=False)
                 print(f"Resultados guardados en {filename}")
@@ -449,7 +451,7 @@ if __name__ == "__main__":
     # df_cmg = formatear_df_cmg(path_cmg)
 
     # Vamos a realizar una prueba de la funcion con Tatara
-    path_cmg = 'Modelo/CMg_tatara.csv'
+    path_cmg = 'Genesis/CMg_cerro_navia.csv'
     df_cmg = formatear_df_cmg(path_cmg)
 
 
@@ -457,7 +459,7 @@ if __name__ == "__main__":
 
     # Parámetros de la planta
     parametros_planta = {
-        'peak_power': 30,  # MW
+        'peak_power': 33,  # MW
         'nominal_power': 30,  # MW
         'inverter_efficency_pv': 0.97,
         'degradacion_anual_pv': 0.0045,
@@ -482,12 +484,12 @@ if __name__ == "__main__":
     vida_util_proyecto = 25
 
     # Valores de sensibilidad
-    peak_power_values = [27]
-    capacidad_values = [90, 120, 150]
+    peak_power_values = [33, 34]
+    capacidad_values = [60, 90, 120, 150, 180]
 
 
     # Carpeta de salida
-    path_carpeta_output = 'Tatara/outputs'
+    path_carpeta_output = 'Genesis/outputs/UtilityBESS'
 
     # Ejecutar la simulación de sensibilidad
     resultados_sensibilidad, resumen_df = sensibilidad_pv_bess(parametros_planta, SoC_inicial, CoD, vida_util_proyecto, df_cmg, peak_power_values, capacidad_values, path_carpeta_output)

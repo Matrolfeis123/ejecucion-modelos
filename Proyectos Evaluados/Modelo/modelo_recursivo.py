@@ -399,10 +399,10 @@ for año in range(CoD, CoD + vida_util_proyecto):
 
 # Guardar resultados en un archivo
 try:
-    resultados.to_excel('Modelo\Generaciones\output_pv_27MW_bess_90MWh_4.0hrs_manual.xlsx', index=False)
+    resultados.to_excel('Modelo\Generaciones\output_pv_27MW_bess_90MWh_5.0hrs_manual.xlsx', index=False)
 
 except:
     print('Error al guardar los resultados en el archivo, debes cerrar el archivo')
     breakpoint()
-    resultados.to_excel('Modelo\Generaciones\output_pv_27MW_bess_90MWh_4.0hrs_manual.xlsx', index=False)
+    resultados.to_excel('Modelo\Generaciones\output_pv_27MW_bess_90MWh_5.0hrs_manual.xlsx', index=False)
 
