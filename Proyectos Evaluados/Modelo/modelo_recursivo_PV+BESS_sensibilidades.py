@@ -4,7 +4,8 @@ import pulp
 import pandas as pd
 import datetime
 from funciones_extra import calcular_ventanas_carga_descarga_diario_v3
-
+#Importar numpy finance
+import numpy_financial as np
 
 
 
@@ -343,22 +344,32 @@ def optimizar_año_pv_bess(año, SoC_inicial, parametros_planta, CoD, generacion
 
 
 
-def sensibilidad_pv_bess(parametros_planta_base, SoC_inicial, CoD, vida_util_proyecto, df_cmg, generacion_list, peak_power_values, capacidad_values, path_carpeta_output):
+def sensibilidad_pv_bess(parametros_planta_base, SoC_inicial, CoD, vida_util_proyecto, df_cmg, peak_power_values, capacidad_values, path_carpeta_output):
     # Initialize structures to store results
     resultados_sensibilidad = {}
     resumen_beneficios = []
 
     # Loop over peak_power and capacidad_values combinations
     for peak_power in peak_power_values:
+            # Cargar los datos de generación de PV
+        # Leer 'generacion.csv' una vez
+        generacion_df = pd.read_csv(f'Tatara/Modelo/Generaciones/generacion_tatara_pv_puro_{peak_power}MWp.csv', sep=';')
+        generacion_list = generacion_df['G solar'].tolist()
+        for i in range(len(generacion_list)):
+            generacion_list[i] = generacion_list[i].replace(',', '.')
+            generacion_list[i] = max(-0.1, float(generacion_list[i]))
+
         for capacidad in capacidad_values:
             print(f"\nEjecución de sensibilidad para peak_power = {peak_power} MW y bess_initial_energy_capacity = {capacidad} MWh")
 
             # Copy the base parameters to avoid modifying the original dict
             parametros_planta = parametros_planta_base.copy()
-            parametros_planta['peak_power'] = peak_power
-            parametros_planta['nominal_power'] = peak_power  # Assuming nominal_power varies with peak_power
+            parametros_planta['peak_power'] = 30
+            parametros_planta['nominal_power'] = 30  # Assuming nominal power is 30 MW
             parametros_planta['bess_initial_energy_capacity'] = capacidad
-
+            parametros_planta['bess_charge_hours'] = capacidad / parametros_planta['bess_charge_power']
+            parametros_planta['bess_discharge_hours'] = capacidad / parametros_planta['bess_discharge_power']
+            
             # Reset SoC_inicial for each simulation
             SoC_inicial_sim = SoC_inicial
 
@@ -416,7 +427,7 @@ def sensibilidad_pv_bess(parametros_planta_base, SoC_inicial, CoD, vida_util_pro
             })
 
             # Save the results to an Excel file
-            filename = f"{path_carpeta_output}/output_pv_{peak_power}MW_bess_{capacidad}MWh.xlsx"
+            filename = f"{path_carpeta_output}/output_pv_{peak_power}MW_bess_{capacidad}MWh_{parametros_planta["bess_initial_energy_capacity"]/parametros_planta["bess_charge_power"]}hrs.xlsx"
             try:
                 resultados.to_excel(filename, index=False)
                 print(f"Resultados guardados en {filename}")
@@ -429,3 +440,59 @@ def sensibilidad_pv_bess(parametros_planta_base, SoC_inicial, CoD, vida_util_pro
     print(resumen_df)
 
     return resultados_sensibilidad, resumen_df
+
+
+if __name__ == "__main__":
+    print('lol')
+    # Cargar los datos de costos marginales
+    # path_cmg = 'Genesis/CMg_cerro_navia.csv'
+    # df_cmg = formatear_df_cmg(path_cmg)
+
+    # Vamos a realizar una prueba de la funcion con Tatara
+    path_cmg = 'Modelo/CMg_tatara.csv'
+    df_cmg = formatear_df_cmg(path_cmg)
+
+
+
+
+    # Parámetros de la planta
+    parametros_planta = {
+        'peak_power': 30,  # MW
+        'nominal_power': 30,  # MW
+        'inverter_efficency_pv': 0.97,
+        'degradacion_anual_pv': 0.0045,
+
+        'bess_charge_power': 30,  # MW
+        'bess_discharge_power': 30,  # MW
+        'bess_charge_hours': 4,
+        'bess_discharge_hours': 4,
+        'bess_initial_energy_capacity': 120,  # MWh
+        'degradacion_anual_bess': 0.02,
+        'bess_charge_efficency': 0.92,
+        'bess_discharge_efficency': 0.94,
+        'inverter_efficency_bess': 0.97,
+        'carga_min_bess': 0,
+        'CoD': 2028,
+        'year_augmentation_bess': 10 #Año a partir del cual se renuevan las baterias
+    }
+
+    # Parámetros de la simulación
+    SoC_inicial = 0
+    CoD = 2028
+    vida_util_proyecto = 25
+
+    # Valores de sensibilidad
+    peak_power_values = [27]
+    capacidad_values = [90, 120, 150]
+
+
+    # Carpeta de salida
+    path_carpeta_output = 'Tatara/outputs'
+
+    # Ejecutar la simulación de sensibilidad
+    resultados_sensibilidad, resumen_df = sensibilidad_pv_bess(parametros_planta, SoC_inicial, CoD, vida_util_proyecto, df_cmg, peak_power_values, capacidad_values, path_carpeta_output)
+
+
+
+
+

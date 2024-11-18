@@ -367,7 +367,7 @@ CoD = parametros_planta['CoD']
 vida_util_proyecto = 25  # Años
 
 # Leer 'generacion.csv' una vez
-generacion_df = pd.read_csv('Modelo/Generaciones/generacion_tatara_pv_puro_33MWp.csv', sep=';')
+generacion_df = pd.read_csv('Tatara/Modelo/Generaciones/generacion_tatara_pv_puro_27MWp.csv', sep=';')
 generacion_list = generacion_df['G solar'].tolist()
 for i in range(len(generacion_list)):
     generacion_list[i] = generacion_list[i].replace(',', '.')
@@ -399,10 +399,10 @@ for año in range(CoD, CoD + vida_util_proyecto):
 
 # Guardar resultados en un archivo
 try:
-    resultados.to_excel('Modelo\Generaciones\calculo_generacion_pv_puro_33MWp.xlsx', index=False)
+    resultados.to_excel('Modelo\Generaciones\output_pv_27MW_bess_90MWh_4.0hrs_manual.xlsx', index=False)
 
 except:
     print('Error al guardar los resultados en el archivo, debes cerrar el archivo')
     breakpoint()
-    resultados.to_excel('Modelo\Generaciones\calculo_generacion_pv_puro_33MWp.xlsx', index=False)
+    resultados.to_excel('Modelo\Generaciones\output_pv_27MW_bess_90MWh_4.0hrs_manual.xlsx', index=False)
 
