@@ -6,6 +6,7 @@ import datetime
 from funciones_extra import calcular_ventanas_carga_descarga_diario_v3
 #Importar numpy finance
 import numpy_financial as np
+import logging
 
 
 
@@ -38,7 +39,7 @@ def formatear_df_cmg(path_csv: str):
 
     # Verificar si hay valores nulos en CMg
     if df_cmg_año['CMg'].isnull().sum() > 0:
-        print('Advertencia: CMg tiene valores nulos')
+        logging.warning('CMg tiene valores nulos')
 
     # Optimizar tipos de datos
     df_cmg_año['Año'] = df_cmg_año['Año'].astype('int16')
@@ -493,8 +494,3 @@ if __name__ == "__main__":
 
     # Ejecutar la simulación de sensibilidad
     resultados_sensibilidad, resumen_df = sensibilidad_pv_bess(parametros_planta, SoC_inicial, CoD, vida_util_proyecto, df_cmg, peak_power_values, capacidad_values, path_carpeta_output)
-
-
-
-
-
