@@ -356,7 +356,7 @@ def sensibilidad_pv_bess(parametros_planta_base, SoC_inicial, CoD, vida_util_pro
     for peak_power in peak_power_values:
         # Cargar los datos de generación de PV Genesis\V_Generacion\
         # Leer 'generacion.csv' una vez Tatara\Modelo\generacion_tatara.csv
-        generacion_df = pd.read_csv(f'Tatara/Modelo/generacion_tatara.csv', sep=';')
+        generacion_df = pd.read_csv(f'Tatara/Modelo/Generaciones/generacion_tatara_pv_puro_33MWp.csv', sep=';')
         generacion_list = generacion_df['G solar'].tolist()
         for i in range(len(generacion_list)):
             generacion_list[i] = generacion_list[i].replace(',', '.')
