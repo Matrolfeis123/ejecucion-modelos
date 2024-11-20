@@ -368,7 +368,7 @@ def sensibilidad_pv_bess(parametros_planta_base, SoC_inicial, CoD, vida_util_pro
             # Copy the base parameters to avoid modifying the original dict
             parametros_planta = parametros_planta_base.copy()
             parametros_planta['peak_power'] = peak_power
-            parametros_planta['nominal_power'] = 9  # CASO GENESIS: 9MWp PMGD
+            parametros_planta['nominal_power'] = 30  #
             parametros_planta['bess_initial_energy_capacity'] = capacidad
             parametros_planta['bess_charge_hours'] = capacidad / parametros_planta['bess_charge_power']
             parametros_planta['bess_discharge_hours'] = capacidad / parametros_planta['bess_discharge_power']
