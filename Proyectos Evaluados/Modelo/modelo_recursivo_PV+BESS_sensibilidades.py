@@ -346,8 +346,8 @@ def sensibilidad_pv_bess(parametros_planta_base, SoC_inicial, CoD, vida_util_pro
     # Loop over peak_power and capacidad_values combinations Quirquincho\V_Generacion\generacion_quirquincho_9.611MWp_PMGD.csv
     for peak_power in peak_power_values:
         # Cargar los datos de generación de PV Genesis\V_Generacion\
-        # Leer 'generacion.csv' una vez Tatara\Modelo\generacion_tatara.csv
-        generacion_df = pd.read_csv(f'Quirquincho/V_Generacion/generacion_quirquincho_{peak_power}MWp_PMGD.csv', sep=';')
+        # Leer 'generacion.csv' una vez 
+        generacion_df = pd.read_csv(f'Genesis/V_Generacion/generacion_genesis_{peak_power}MWp_PMGD.csv', sep=';')
         generacion_list = generacion_df['G solar'].tolist()
         for i in range(len(generacion_list)):
             generacion_list[i] = generacion_list[i].replace(',', '.')
@@ -438,9 +438,9 @@ def sensibilidad_pv_bess(parametros_planta_base, SoC_inicial, CoD, vida_util_pro
 
 if __name__ == "__main__":
     print('lol')
-    # Cargar los datos de costos marginales/Precio Estabilizado
+    # Cargar los datos de costos marginales/Precio 
 
-    path_cmg = 'Quirquincho/PE_quirquincho.csv'
+    path_cmg = 'Genesis/PE_cerro_navia.csv'
     df_cmg = formatear_df_cmg(path_cmg)
 
 
@@ -448,7 +448,7 @@ if __name__ == "__main__":
 
     # Parámetros de la planta
     parametros_planta = {
-        'peak_power': 10.611,  # MW
+        'peak_power': 10.8,  # MW
         'nominal_power': 9,  # MW
         'inverter_efficency_pv': 0.97,
         'degradacion_anual_pv': 0.0045,
@@ -473,12 +473,12 @@ if __name__ == "__main__":
     vida_util_proyecto = 25
 
     # Valores de sensibilidad
-    peak_power_values = [9.611, 10.611, 11.611]
-    capacidad_values = [27, 36, 45]
+    peak_power_values = [9.8, 10.8, 11.8]
+    capacidad_values = [18, 27, 36, 45, 54]
 
 
-    # Carpeta de salida
-    path_carpeta_output = 'Quirquincho/outputs/'
+    # Carpeta de salida 
+    path_carpeta_output = 'Genesis/outputs/PMGDBESSDEF/'
 
     # Ejecutar la simulación de sensibilidad
     resultados_sensibilidad, resumen_df = sensibilidad_pv_bess(parametros_planta, SoC_inicial, CoD, vida_util_proyecto, df_cmg, peak_power_values, capacidad_values, path_carpeta_output)
