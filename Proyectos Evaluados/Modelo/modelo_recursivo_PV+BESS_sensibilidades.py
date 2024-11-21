@@ -474,7 +474,7 @@ if __name__ == "__main__":
 
     # Valores de sensibilidad
     peak_power_values = [8.611, 9.611, 10.611]
-    capacidad_values = [2, 3, 4]
+    capacidad_values = [18, 27, 36]
 
 
     # Carpeta de salida 
