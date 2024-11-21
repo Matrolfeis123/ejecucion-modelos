@@ -347,7 +347,7 @@ def sensibilidad_pv_bess(parametros_planta_base, SoC_inicial, CoD, vida_util_pro
     for peak_power in peak_power_values:
         # Cargar los datos de generación de PV Genesis\V_Generacion\
         # Leer 'generacion.csv' una vez 
-        generacion_df = pd.read_csv(f'Genesis/V_Generacion/generacion_genesis_{peak_power}MWp_PMGD.csv', sep=';')
+        generacion_df = pd.read_csv(f'Leon/V_Generacion/generacion_leon_{peak_power}MWp_PMGD.csv', sep=';')
         generacion_list = generacion_df['G solar'].tolist()
         for i in range(len(generacion_list)):
             generacion_list[i] = generacion_list[i].replace(',', '.')
@@ -440,7 +440,7 @@ if __name__ == "__main__":
     print('lol')
     # Cargar los datos de costos marginales/Precio 
 
-    path_cmg = 'Genesis/PE_cerro_navia.csv'
+    path_cmg = 'Leon/PE_itahue.csv'
     df_cmg = formatear_df_cmg(path_cmg)
 
 
@@ -448,16 +448,16 @@ if __name__ == "__main__":
 
     # Parámetros de la planta
     parametros_planta = {
-        'peak_power': 10.8,  # MW
+        'peak_power': 9.611,  # MW
         'nominal_power': 9,  # MW
         'inverter_efficency_pv': 0.97,
         'degradacion_anual_pv': 0.0045,
 
         'bess_charge_power': 9,  # MW
         'bess_discharge_power': 9,  # MW
-        'bess_charge_hours': 4,
-        'bess_discharge_hours': 4,
-        'bess_initial_energy_capacity': 36,  # MWh
+        'bess_charge_hours': 2,
+        'bess_discharge_hours': 2,
+        'bess_initial_energy_capacity': 18,  # MWh
         'degradacion_anual_bess': 0.02,
         'bess_charge_efficency': 0.92,
         'bess_discharge_efficency': 0.94,
@@ -473,12 +473,12 @@ if __name__ == "__main__":
     vida_util_proyecto = 25
 
     # Valores de sensibilidad
-    peak_power_values = [9.8, 10.8, 11.8]
-    capacidad_values = [18, 27, 36, 45, 54]
+    peak_power_values = [8.611, 9.611, 10.611]
+    capacidad_values = [2, 3, 4]
 
 
     # Carpeta de salida 
-    path_carpeta_output = 'Genesis/outputs/PMGDBESSDEF/'
+    path_carpeta_output = 'Leon/outputs/'
 
     # Ejecutar la simulación de sensibilidad
     resultados_sensibilidad, resumen_df = sensibilidad_pv_bess(parametros_planta, SoC_inicial, CoD, vida_util_proyecto, df_cmg, peak_power_values, capacidad_values, path_carpeta_output)
