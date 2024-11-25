@@ -107,8 +107,6 @@ def optimizar_año_pv_bess(año, SoC_inicial, parametros_planta, CoD, generacion
         degradacion_bess = (1 - degradacion_anual_bess) ** (indice_año - parametros_planta['year_augmentation_bess'])
         bess_actual_energy_capacity = bess_initial_energy_capacity * degradacion_bess
 
-
-
     # Calcular Factores de degradacion acumulada: degradamos al inicio de cada ejecucion
     degradacion_acum_pv = (1-degradacion_anual_pv) ** indice_año
     
@@ -467,7 +465,7 @@ if __name__ == "__main__":
     vida_util_proyecto = 25
 
     # Valores de sensibilidad
-    peak_power_values = [9.611, 10.611, 11.611]
+    peak_power_values = [11.611]
     capacidad_values = [18, 27, 36]
 
 
