@@ -336,8 +336,6 @@ def optimizar_año_pv_bess(año, SoC_inicial, parametros_planta, CoD, generacion
 
 
 
-
-
 def sensibilidad_pv_bess(parametros_planta_base, SoC_inicial, CoD, vida_util_proyecto, df_cmg, peak_power_values, capacidad_values, path_carpeta_output):
     # Initialize structures to store results
     resultados_sensibilidad = {}
@@ -347,7 +345,7 @@ def sensibilidad_pv_bess(parametros_planta_base, SoC_inicial, CoD, vida_util_pro
     for peak_power in peak_power_values:
         # Cargar los datos de generación de PV Genesis\V_Generacion\
         # Leer 'generacion.csv' una vez 
-        generacion_df = pd.read_csv(f'Leon/V_Generacion/generacion_leon_{peak_power}MWp_PMGD.csv', sep=';')
+        generacion_df = pd.read_csv(f'Melipilla/V_Generacion/generacion_melipilla_{peak_power}MWp_PMGD.csv', sep=';')
         generacion_list = generacion_df['G solar'].tolist()
         for i in range(len(generacion_list)):
             generacion_list[i] = generacion_list[i].replace(',', '.')
@@ -437,13 +435,9 @@ def sensibilidad_pv_bess(parametros_planta_base, SoC_inicial, CoD, vida_util_pro
 
 
 if __name__ == "__main__":
-    print('lol')
     # Cargar los datos de costos marginales/Precio 
-
-    path_cmg = 'Leon/PE_itahue.csv'
+    path_cmg = 'Melipilla/PE_cerro_navia.csv'
     df_cmg = formatear_df_cmg(path_cmg)
-
-
 
 
     # Parámetros de la planta
@@ -473,12 +467,12 @@ if __name__ == "__main__":
     vida_util_proyecto = 25
 
     # Valores de sensibilidad
-    peak_power_values = [8.611, 9.611, 10.611]
+    peak_power_values = [9.611, 10.611, 11.611]
     capacidad_values = [18, 27, 36]
 
 
     # Carpeta de salida 
-    path_carpeta_output = 'Leon/outputs/'
+    path_carpeta_output = 'Melipilla/outputs/'
 
     # Ejecutar la simulación de sensibilidad
     resultados_sensibilidad, resumen_df = sensibilidad_pv_bess(parametros_planta, SoC_inicial, CoD, vida_util_proyecto, df_cmg, peak_power_values, capacidad_values, path_carpeta_output)
