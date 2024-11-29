@@ -224,6 +224,8 @@ def sensibilidad_bess_initial_energy_capacity(parametros_planta, SoC_inicial, Co
         print(f"\nEjecución de sensibilidad para bess_initial_energy_capacity = {capacidad} MWh")
         # Actualizar el parámetro de capacidad inicial en los parámetros de la planta
         parametros_planta['bess_initial_energy_capacity'] = capacidad
+        
+
 
         # Ejecución de la optimización para el horizonte de 25 años
         resultados = pd.DataFrame()
@@ -269,7 +271,7 @@ def sensibilidad_bess_initial_energy_capacity(parametros_planta, SoC_inicial, Co
 
 
 
-path_csv = 'Quelentaro/CMg_rapel.csv'
+path_csv = 'LaPunta/CMg_LaPunta.csv'
 df_cmg = formatear_df_cmg(path_csv)
 #imprimir primeros 5 registros
 print(df_cmg.head())
@@ -277,9 +279,9 @@ print(df_cmg.head())
 
 # Parámetros de la planta (solo BESS)
 parametros_planta = {
-    'bess_charge_power': 150,  # MW
-    'bess_discharge_power': 150,  # MW
-    'bess_initial_energy_capacity': 120,  # MWh
+    'bess_charge_power': 20,  # MW
+    'bess_discharge_power': 20,  # MW
+    'bess_initial_energy_capacity': 60,  # MWh
     'degradacion_anual_bess': 0.02,
     'bess_charge_efficency': 0.92,
     'bess_discharge_efficency': 0.94,
@@ -290,7 +292,7 @@ parametros_planta = {
 }
 
 # Valores de capacidad inicial para el análisis de sensibilidad
-capacidad_values = [450, 600, 750, 900, 1050, 1200, 1350]  # Ejemplo de diferentes valores para sensibilización
+capacidad_values = [60, 80, 100]  # Ejemplo de diferentes valores para sensibilización
 
 # Ejecutar análisis de sensibilidad
 resultados_sensibilidad, resumen_beneficios = sensibilidad_bess_initial_energy_capacity(
@@ -300,5 +302,5 @@ resultados_sensibilidad, resumen_beneficios = sensibilidad_bess_initial_energy_c
     25,
     df_cmg,
     capacidad_values,
-    'Quelentaro/outputs'
+    'LaPunta/outputs'
 )
