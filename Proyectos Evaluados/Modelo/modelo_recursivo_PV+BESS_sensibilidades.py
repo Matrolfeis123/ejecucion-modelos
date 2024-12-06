@@ -343,7 +343,7 @@ def sensibilidad_pv_bess(parametros_planta_base, SoC_inicial, CoD, vida_util_pro
     for peak_power in peak_power_values:
         # Cargar los datos de generación de PV Genesis\V_Generacion\
         # Leer 'generacion.csv' una vez 
-        generacion_df = pd.read_csv(f'Terrazas/V_generacion/generacion_terrazas_{peak_power}MWp.csv', sep=';')
+        generacion_df = pd.read_csv(f'Nogales/V_generacion/generacion_nogales_{peak_power}MWp.csv', sep=';')
         generacion_list = generacion_df['G solar'].tolist()
         for i in range(len(generacion_list)):
             generacion_list[i] = generacion_list[i].replace(',', '.')
@@ -382,74 +382,38 @@ def sensibilidad_pv_bess(parametros_planta_base, SoC_inicial, CoD, vida_util_pro
                     print(f"La optimización falló para el año {año}")
                     break
 
-            # Store the results for this configuration
-            key = f"PV_{peak_power}MW_BESS_{capacidad}MWh"
-            resultados_sensibilidad[key] = resultados
 
-            # Estimate CAPEX and OPEX (using placeholder values)
-            Costo_Potencia_PV = 550000  # USD/MW
-            Costo_Potencia_BESS = 200000  # USD/MW
-            Costo_Capacidad_BESS = 400000  # USD/MWh
-
-            CAPEX_PV = peak_power * Costo_Potencia_PV
-            CAPEX_BESS = (parametros_planta['bess_charge_power'] * Costo_Potencia_BESS) + (capacidad * Costo_Capacidad_BESS)
-            CAPEX_Total = CAPEX_PV + CAPEX_BESS
-
-            OPEX_anual = CAPEX_Total * 0.02  # Assuming 2% of CAPEX
-
-            # Calculate Net Cash Flows
-            flujos_caja = [-CAPEX_Total]
-            for beneficio_anual in lista_beneficios_anuales:
-                flujo_neto = beneficio_anual - OPEX_anual
-                flujos_caja.append(flujo_neto)
-
-            # Calculate IRR
-            TIR = np.irr(flujos_caja) * 100  # In percentage
-
-            # Append summary
-            resumen_beneficios.append({
-                'Configuración': key,
-                'Peak Power (MW)': peak_power,
-                'Capacidad BESS (MWh)': capacidad,
-                'Beneficio Neto Total (USD)': beneficio_total,
-                'CAPEX Total (USD)': CAPEX_Total,
-                'TIR (%)': TIR
-            })
 
             # Save the results to an Excel file
-            filename = f"{path_carpeta_output}/output_pv_{peak_power}MW_bess_{capacidad}MWh_{parametros_planta["bess_charge_hours"]}hrs_PPA.xlsx"
+            filename = f"{path_carpeta_output}/output_pv_{peak_power}MW_bess_{capacidad}MWh_{parametros_planta["bess_charge_hours"]}hrs.xlsx"
             try:
                 resultados.to_excel(filename, index=False)
                 print(f"Resultados guardados en {filename}")
             except Exception as e:
                 print(f'Error al guardar los resultados en el archivo {filename}: {e}')
 
-    # Create a DataFrame from the summary
-    resumen_df = pd.DataFrame(resumen_beneficios)
-    print("\nResumen de beneficios netos y TIR para cada configuración:")
-    print(resumen_df)
 
-    return resultados_sensibilidad, resumen_df
+    return resultados_sensibilidad
 
 
 if __name__ == "__main__":
     # Cargar los datos de costos marginales/Precio 
-    path_cmg = 'Terrazas/PPA_terrazas.csv'
+    path_cmg = 'Nogales/CMg_nogales.csv'
     df_cmg = formatear_df_cmg(path_cmg)
 
 
     # Parámetros de la planta
     parametros_planta = {
-        'peak_power': 230,  # MW
-        'nominal_power': 210,  # MW Caso1: 210, Caso2: 230
+        'peak_power': 110,  # MW
+        'nominal_power': 100,  # MW
         'inverter_efficency_pv': 0.97,
         'degradacion_anual_pv': 0.0045,
 
-        'bess_charge_power': 210,  # MW
-        'bess_discharge_power': 210,  # MW
+        'bess_charge_power': 100,  # MW
+        'bess_discharge_power': 100,  # MW
         'bess_charge_hours': 3,
         'bess_discharge_hours': 3,
-        'bess_initial_energy_capacity': 690,  # MWh
+        'bess_initial_energy_capacity': 300,  # MWh
         'degradacion_anual_bess': 0.02,
         'bess_charge_efficency': 0.92,
         'bess_discharge_efficency': 0.94,
@@ -465,12 +429,12 @@ if __name__ == "__main__":
     vida_util_proyecto = 25
 
     # Valores de sensibilidad: Caso 1 --> 280 MWp, 230 MW nominal PV, 230 MW nominal BESS
-    peak_power_values = [230]
-    capacidad_values = [630, 840, 1050]
+    peak_power_values = [110]
+    capacidad_values = [300, 400, 500]
 
 
     # Carpeta de salida 
-    path_carpeta_output = 'Terrazas/outputs/'
+    path_carpeta_output = 'Nogales/outputs/'
 
     # Ejecutar la simulación de sensibilidad
-    resultados_sensibilidad, resumen_df = sensibilidad_pv_bess(parametros_planta, SoC_inicial, CoD, vida_util_proyecto, df_cmg, peak_power_values, capacidad_values, path_carpeta_output)
+    resultados_sensibilidad = sensibilidad_pv_bess(parametros_planta, SoC_inicial, CoD, vida_util_proyecto, df_cmg, peak_power_values, capacidad_values, path_carpeta_output)
