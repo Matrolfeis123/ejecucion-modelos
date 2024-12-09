@@ -343,7 +343,7 @@ def sensibilidad_pv_bess(parametros_planta_base, SoC_inicial, CoD, vida_util_pro
     for peak_power in peak_power_values:
         # Cargar los datos de generación de PV Genesis\V_Generacion\
         # Leer 'generacion.csv' una vez 
-        generacion_df = pd.read_csv(f'Nogales/V_generacion/generacion_nogales_{peak_power}MWp.csv', sep=';')
+        generacion_df = pd.read_csv(f'QuirquinchoV2/V_generacion/generacion_quirquincho_{peak_power}MWp_PMGD_V2.csv', sep=';')
         generacion_list = generacion_df['G solar'].tolist()
         for i in range(len(generacion_list)):
             generacion_list[i] = generacion_list[i].replace(',', '.')
@@ -385,7 +385,7 @@ def sensibilidad_pv_bess(parametros_planta_base, SoC_inicial, CoD, vida_util_pro
 
 
             # Save the results to an Excel file
-            filename = f"{path_carpeta_output}/output_pv_{peak_power}MW_bess_{capacidad}MWh_{parametros_planta["bess_charge_hours"]}hrs.xlsx"
+            filename = f"{path_carpeta_output}/output_pv_{peak_power}MW_bess_{capacidad}MWh_{parametros_planta["bess_charge_hours"]}hrs_V2def.xlsx"
             try:
                 resultados.to_excel(filename, index=False)
                 print(f"Resultados guardados en {filename}")
@@ -398,43 +398,43 @@ def sensibilidad_pv_bess(parametros_planta_base, SoC_inicial, CoD, vida_util_pro
 
 if __name__ == "__main__":
     # Cargar los datos de costos marginales/Precio 
-    path_cmg = 'Nogales/CMg_nogales.csv'
+    path_cmg = 'QuirquinchoV2/PE_quirquincho.csv'
     df_cmg = formatear_df_cmg(path_cmg)
 
 
     # Parámetros de la planta
     parametros_planta = {
-        'peak_power': 110,  # MW
-        'nominal_power': 100,  # MW
+        'peak_power': 10.611,  # MW
+        'nominal_power': 9,  # MW
         'inverter_efficency_pv': 0.97,
         'degradacion_anual_pv': 0.0045,
 
-        'bess_charge_power': 100,  # MW
-        'bess_discharge_power': 100,  # MW
+        'bess_charge_power': 9,  # MW
+        'bess_discharge_power': 9,  # MW
         'bess_charge_hours': 3,
         'bess_discharge_hours': 3,
-        'bess_initial_energy_capacity': 300,  # MWh
+        'bess_initial_energy_capacity': 27,  # MWh
         'degradacion_anual_bess': 0.02,
         'bess_charge_efficency': 0.92,
         'bess_discharge_efficency': 0.94,
         'inverter_efficency_bess': 0.97,
         'carga_min_bess': 0,
-        'CoD': 2030,
+        'CoD': 2028,
         'year_augmentation_bess': 10 #Año a partir del cual se renuevan las baterias
     }
 
     # Parámetros de la simulación
     SoC_inicial = 0
-    CoD = 2030
+    CoD = 2028
     vida_util_proyecto = 25
 
     # Valores de sensibilidad: Caso 1 --> 280 MWp, 230 MW nominal PV, 230 MW nominal BESS
-    peak_power_values = [110]
-    capacidad_values = [300, 400, 500]
+    peak_power_values = [10.611]
+    capacidad_values = [27]
 
 
     # Carpeta de salida 
-    path_carpeta_output = 'Nogales/outputs/'
+    path_carpeta_output = 'QuirquinchoV2/outputs/'
 
     # Ejecutar la simulación de sensibilidad
     resultados_sensibilidad = sensibilidad_pv_bess(parametros_planta, SoC_inicial, CoD, vida_util_proyecto, df_cmg, peak_power_values, capacidad_values, path_carpeta_output)
