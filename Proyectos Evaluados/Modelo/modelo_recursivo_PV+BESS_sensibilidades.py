@@ -343,7 +343,7 @@ def sensibilidad_pv_bess(parametros_planta_base, SoC_inicial, CoD, vida_util_pro
     for peak_power in peak_power_values:
         # Cargar los datos de generación de PV Genesis\V_Generacion\
         # Leer 'generacion.csv' una vez 
-        generacion_df = pd.read_csv(f'Terrazas/V_generacion/generacion_terrazas_{peak_power}MWp.csv', sep=';')
+        generacion_df = pd.read_csv(f'Terrazas_V2_INFORME/PEOR_CASO/generacion_terrazas_{peak_power}MWp_factor25.csv', sep=';')
         generacion_list = generacion_df['G solar'].tolist()
         for i in range(len(generacion_list)):
             generacion_list[i] = generacion_list[i].replace(',', '.')
@@ -396,7 +396,7 @@ def sensibilidad_pv_bess(parametros_planta_base, SoC_inicial, CoD, vida_util_pro
 
 if __name__ == "__main__":
     # Cargar los datos de costos marginales/Precio 
-    path_cmg = 'Terrazas/PPA_terrazas.csv'
+    path_cmg = 'Terrazas_V2_INFORME/PEOR_CASO/CMg_terrazas_peorcaso.csv'
     df_cmg = formatear_df_cmg(path_cmg)
 
 
@@ -432,7 +432,7 @@ if __name__ == "__main__":
 
 
     # Carpeta de salida 
-    path_carpeta_output = 'Terrazas/outputs/'
+    path_carpeta_output = 'Terrazas_V2_INFORME/PEOR_CASO/'
 
     # Ejecutar la simulación de sensibilidad
     resultados_sensibilidad = sensibilidad_pv_bess(parametros_planta, SoC_inicial, CoD, vida_util_proyecto, df_cmg, peak_power_values, capacidad_values, path_carpeta_output)

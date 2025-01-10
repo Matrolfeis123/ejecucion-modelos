@@ -271,7 +271,7 @@ def sensibilidad_bess_initial_energy_capacity(parametros_planta, SoC_inicial, Co
 
 
 
-path_csv = 'Sirius/CMg_pan_de_azucar.csv'
+path_csv = 'Candelaria/CMg_candelaria_casohigh.csv'
 df_cmg = formatear_df_cmg(path_csv)
 #imprimir primeros 5 registros
 print(df_cmg.head())
@@ -280,8 +280,8 @@ print(df_cmg.head())
 # Parámetros de la planta (solo BESS)
 parametros_planta = {
     'bess_charge_power': 30,  # MW
-    'bess_discharge_power': 30,  # MW
-    'bess_initial_energy_capacity': 120,  # MWh
+    'bess_discharge_power': 100,  # MW
+    'bess_initial_energy_capacity': 300,  # MWh
     'degradacion_anual_bess': 0.02,
     'bess_charge_efficency': 0.92,
     'bess_discharge_efficency': 0.94,
@@ -292,7 +292,7 @@ parametros_planta = {
 }
 
 # Valores de capacidad inicial para el análisis de sensibilidad
-capacidad_values = [120]  # Ejemplo de diferentes valores para sensibilización
+capacidad_values = [300]  # Ejemplo de diferentes valores para sensibilización
 
 # Ejecutar análisis de sensibilidad
 resultados_sensibilidad, resumen_beneficios = sensibilidad_bess_initial_energy_capacity(
@@ -302,5 +302,5 @@ resultados_sensibilidad, resumen_beneficios = sensibilidad_bess_initial_energy_c
     25,
     df_cmg,
     capacidad_values,
-    'Sirius/outputs'
+    'Candelaria/outputs'
 )
